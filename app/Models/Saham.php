@@ -17,6 +17,5 @@ class Saham extends Model
         'low',
         'close',
         'volume',
-
     ];
 }

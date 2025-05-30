@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Saham;
-use App\Models\PorsiSaham;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -17,7 +16,7 @@ class MonteController extends Controller
         } else {
             $saham = Saham::where('nama_saham', 'GOTO.JK')->get();
         }
-        
+
 
         $closingPlucked = $saham->pluck('close');
         $closingSum = $closingPlucked->sum();
@@ -25,7 +24,7 @@ class MonteController extends Controller
 
         $pdf = Pdf::loadView('monte.pdf', compact('saham', 'closingSum'));
         return $pdf->download('saham.pdf');
-        
+
     }
     /**
      * Display a listing of the resource.
@@ -34,83 +33,66 @@ class MonteController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request->all());
+        // Ensure $saham is a Collection and sorted by date
+        $saham = Saham::where('nama_saham', 'GOTO.JK')
+            ->get(['id', 'date', 'nama_saham', 'close'])
+            ->sortBy('date', SORT_ASC);
 
-        $saham = null;
-        if ($request->isMethod('get') && $request->nama_saham_selected) {
-            $saham = Saham::where('nama_saham', $request->nama_saham_selected)->get();
-        } else {
-            $saham = Saham::where('nama_saham', 'GOTO.JK')->get();
+        // Calculate closingSum for all selected saham data
+        $closingSum = $saham->sum('close');
+
+        // Initialize processed as a collection
+        $processed = collect();
+
+        // Initialize cumulative and related variables OUTSIDE the loop for a continuous cumulative sum
+        $cumulative = 0;
+        $previousCumulative = 0; // Keep track for interval start
+
+        if ($closingSum == 0) {
+            // Handle the case where closingSum is zero (e.g., return empty, throw error)
+            // For now, let's just return an empty collection if sum is zero.
+            return $processed;
         }
-        
-        $porsisaham=PorsiSaham::all();
-        
-        $closing_sum = $saham->sum(function ($saham) {
-            return floatval(str_replace(',', '', $saham->close));
-        });
-                $cumulative = 0;
-                foreach ($saham as $sh) {
-                    $close = floatval(str_replace(',', '', $sh->close));
-                   
-                    if ($closing_sum > 0) {
-                        $porsi = $close / $closing_sum;
-                    } else {
-                        $porsi = 0;
-                    }
-                    $kumulatif = $porsi + $cumulative;
-                    $cumulative = $kumulatif;
-                    
-                PorsiSaham::create([
-                            'date' => $sh->date,
-                            'nama_saham' => $sh->nama_saham,
-                            'close' => $close,
-                            'porsi' => $porsi,
-                            'kumulatif' => $kumulatif,
-                        ]);
-                    }
 
-        $closingPlucked = $saham->pluck('close');
-        $closingSum = $closingPlucked->sum();
-        
-        $nama_saham = Saham::all()->pluck('nama_saham')->unique();
-        // session()->flash('success', 'Porsi berhasil dihitung dan disimpan.');
+        // Single loop is sufficient for a continuous cumulative calculation
+        foreach ($saham as $index => $currentData) {
+            $probabilities = $currentData->close / $closingSum;
+
+            // The interval start is the cumulative value before adding the current probability.
+            // For the very first item (index 0), intervalStart will be 0.
+            $intervalStart = $cumulative;
+
+            // If it's not the very first item, we can add a tiny increment to intervalStart
+            // to ensure strict non-overlap, though this is usually for specific display/use cases.
+            // Be careful with this, as it can make intervals slightly misaligned.
+            // A common approach is [start, end) where end is start of next.
+            if ($index > 0) { // Apply for all values after the first one
+                $intervalStart += 0.0001; // Or PHP_FLOAT_EPSILON for higher precision
+            }
+
+            // Update the cumulative sum
+            $cumulative += $probabilities;
+
+            // The interval end is the cumulative value after adding the current probability
+            $intervalEnd = $cumulative;
+
+            $processed->push((object)[
+                'id' => $currentData->id,
+                'date' => $currentData->date,
+                'nama_saham' => $currentData->nama_saham,
+                'close' => $currentData->close,
+                'probabilities' => number_format($probabilities, 4),
+                'cumulative' => number_format($cumulative, 4),
+                'interval_start' => number_format($intervalStart, 4),
+                'interval_end' => number_format($intervalEnd, 4),
+            ]);
+        }
+
         return view('monte.index', [
-            'saham' => $saham,
-            'closing_sum' => $closingSum,
-            'nama_saham' => $nama_saham,
-            'porsisaham' => $porsisaham,
+            'saham' => $processed,
+            'nama_saham' => $saham->pluck('nama_saham')->unique(),
         ]);
     }
-
-
-    // public function hitungPorsi()
-    // {
-    //     $sahams = Saham::all();
-
-    //     // Bersihkan dan total
-    //     $closing_sum = $sahams->sum(function ($saham) {
-    //         return floatval(str_replace(',', '', $saham->close));
-    //     });
-
-    //     foreach ($sahams as $saham) {
-    //         $close = floatval(str_replace(',', '', $saham->close));
-
-    //         if ($closing_sum > 0) {
-    //             $saham->porsi = $close / $closing_sum;
-    //         } else {
-    //             $saham->porsi = 0;
-    //         }
-
-    //         $saham->save();
-    //     }
-
-    //     return redirect()->back()->with('success', 'Porsi berhasil dihitung dan disimpan.');
-    // }
-
-    // public function tampilkanSaham(Request $request)
-    // {
-
-    // }
 
     /**
      * Show the form for creating a new resource.
@@ -131,7 +113,7 @@ class MonteController extends Controller
     public function store(Request $request)
     {
         Saham::create($request->all());
- 
+
         return redirect()->route('monte.index')->with('success', 'saham added successfully');
     }
 
@@ -141,7 +123,7 @@ class MonteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(string $id)
     {
         $saham = Saham::findOrFail($id);
         return view('monte.show', compact('saham'));
@@ -153,7 +135,7 @@ class MonteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(string $id)
     {
         $saham = Saham::findOrFail($id);
         return view('monte.edit', compact('saham'));
@@ -166,11 +148,11 @@ class MonteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $saham = Saham::findOrFail($id);
         $saham->update($request->all());
-  
+
         return redirect()->route('monte.index')->with('success', 'saham updated successfully');
     }
 
@@ -180,11 +162,11 @@ class MonteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $saham = Saham::findOrFail($id);
         $saham = $saham->delete();
-  
+
         return redirect()->route('saham.index')->with('success', 'saham deleted successfully');
     }
 }
