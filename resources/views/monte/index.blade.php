@@ -53,7 +53,7 @@
                             <td class="align-middle">{{ $rs->nama_saham }}</td>
                             <td class="align-middle">{{ $rs->close }}</td>
                             <td class="align-middle">{{ number_format($porsisaham[$loop->iteration - 1]->porsi, 4) }}</td>
-                            <td class="align-middle">{{ 0 }}</td> 
+                            <td class="align-middle">{{ number_format($porsisaham[$loop->iteration - 1]->kumulatif, 4) }}</td> 
                             <td class="align-middle">{{ 0}}</td> 
                             <td class="align-middle">{{ 0 }}</td>
                             <td class="align-middle">

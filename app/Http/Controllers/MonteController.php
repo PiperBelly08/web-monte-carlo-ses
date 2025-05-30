@@ -44,25 +44,28 @@ class MonteController extends Controller
         }
         
         $porsisaham=PorsiSaham::all();
-
+        
         $closing_sum = $saham->sum(function ($saham) {
             return floatval(str_replace(',', '', $saham->close));
-            });
-
+        });
+                $cumulative = 0;
                 foreach ($saham as $sh) {
                     $close = floatval(str_replace(',', '', $sh->close));
-
+                   
                     if ($closing_sum > 0) {
                         $porsi = $close / $closing_sum;
                     } else {
                         $porsi = 0;
                     }
-
+                    $kumulatif = $porsi + $cumulative;
+                    $cumulative = $kumulatif;
+                    
                 PorsiSaham::create([
                             'date' => $sh->date,
                             'nama_saham' => $sh->nama_saham,
                             'close' => $close,
                             'porsi' => $porsi,
+                            'kumulatif' => $kumulatif,
                         ]);
                     }
 

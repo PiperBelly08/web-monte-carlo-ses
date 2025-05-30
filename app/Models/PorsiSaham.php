@@ -14,5 +14,6 @@ class PorsiSaham extends Model
         'nama_saham',
         'close',
         'porsi',
+        'kumulatif',
      ];
 }
