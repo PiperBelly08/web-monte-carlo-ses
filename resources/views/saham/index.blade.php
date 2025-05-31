@@ -85,7 +85,11 @@
         </table>
     </div>
     <script>
-        let table = new DataTable('#example');
+        let table = new DataTable('#example', {
+            language: {
+                url: '//cdn.datatables.net/plug-ins/2.3.1/i18n/id.json',
+            },
+        });
 
         const selectOption = document.getElementById('nama_saham');
 
