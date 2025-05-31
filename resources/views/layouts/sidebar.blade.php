@@ -1,7 +1,7 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
   <!-- Sidebar - Brand -->
-  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+  <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
     <div class="sidebar-brand-icon rotate-n-15">
       <i class="fas fa-superscript"></i>
     </div>
@@ -15,25 +15,29 @@
   <li class="nav-item">
     <a class="nav-link" href="{{ route('dashboard') }}">
       <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Dashboard</span></a>
+      <span>Dashboard</span>
+    </a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('saham.index') }}">
-      <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Data Saham</span></a>
+      <i class="fas fa-fw fa-chart-pie"></i>
+      <span>Data</span>
+    </a>
   </li>
 
   <li class="nav-item">
     <a class="nav-link" href="{{ route('monte.index') }}">
-      <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Monte Carlo</span></a>
+      <i class="fas fa-calculator"></i>
+      <span>Monte Carlo Method</span>
+    </a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="/profile">
-      <i class="fas fa-fw fa-tachometer-alt"></i>
-      <span>Profile</span></a>
+    <a class="nav-link" href="{{ route('profile') }}">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </a>
   </li>
 
   <!-- Divider -->
