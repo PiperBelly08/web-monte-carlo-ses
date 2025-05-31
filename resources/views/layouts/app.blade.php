@@ -18,8 +18,11 @@
 
 
   {{-- DataTables --}}
-  <link href="https://cdn.datatables.net/2.3.1/css/dataTables.dataTables.min.css" rel="stylesheet" type="text/css">
-  <script src="https://cdn.datatables.net/2.3.1/js/dataTables.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+  <link href="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.7.0/dt-2.3.1/datatables.min.css" rel="stylesheet" integrity="sha384-KVx2NMh3yb+/c7xLQuLM2OGT2siXz8dVpnV4f+ld4oEttCgqeqEeS5OTZBBfG22H" crossorigin="anonymous">
+
+  <script src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.7.0/dt-2.3.1/datatables.min.js" integrity="sha384-62IshzjNrxjcAIVPLrg27Sbos3XPPM+thVAZ3RGCPmDkDkQyQaiNfTQwf/hrMK3a" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
 
   <!-- Custom styles for this template-->
   <link href="{{ asset('admin_assets/css/sb-admin-2.min.css') }}" rel="stylesheet">

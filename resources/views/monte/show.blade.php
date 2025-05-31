@@ -89,8 +89,8 @@
         </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="example">
+    <div class="table-responsive my-4">
+        <table class="table table-hover my-2" id="example">
             <thead class="table-primary text-nowrap">
                 <tr>
                     <th rowspan="2">No</th>
