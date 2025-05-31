@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Using Monte Carlo and Single Exponential Smoothing methods to predict stock price">
   <meta name="author" content="PiperBelly">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>Montesse Admin</title>
 

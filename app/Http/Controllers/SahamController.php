@@ -164,4 +164,27 @@ class SahamController extends Controller
 
         return redirect()->route('saham.index')->with('success', 'saham deleted successfully');
     }
+
+    // Custom
+    /**
+     * Retrieve data based on request parameters and return as JSON.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getData(Request $request)
+    {
+        // Assuming we're retrieving data from a Saham model based on some query parameters
+        $validated = $request->validate([
+            '_token' => 'required',
+            'nama_saham' => 'required|string|max:255',
+        ]);
+
+        $data = Saham::where('nama_saham', $validated['nama_saham'])
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // Return the result as JSON
+        return response()->json($data);
+    }
 }
