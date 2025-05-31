@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('monte', MonteController::class);
     Route::get('/monte-show-data/{id}', [MonteController::class, 'showData'])->name('monte.show.data');
+    Route::post('/monte-show-data/{id}', [MonteController::class, 'showData'])->name('monte.show.data.generate');
     Route::post('/monte-export-pdf', [MonteController::class, 'exportPdf'])->name('monte.export.pdf');
 
     Route::get('/profile', [App\Http\Controllers\AuthController::class, 'profile'])->name('profile');

@@ -5,11 +5,11 @@
 @section('contents')
     <div style="d-flex align-items-center justify-content-between; gap: 10px;">
         <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-            <a href="{{ route('saham.create') }}" class="btn btn-primary">Add Product</a>
-            <a href="{{ route('saham.export.pdf') }}" class="btn btn-outline-danger" target="_blank">Export PDF</a>
+            <a href="{{ route('saham.create') }}" class="btn btn-primary"><i class="fas fa-plus mr-2"></i>Add Product</a>
+            <a href="{{ route('saham.export.pdf') }}" class="btn btn-outline-danger" target="_blank"><i class="fas fa-file-pdf mr-2"></i>Export PDF</a>
             <form action="{{ route('saham.clear') }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Hapus Semua Data?')" class="m-0 p-0">
                 @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger">Clear</button>
+                <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash mr-2"></i>Clear</button>
             </form>
         </div>
     </div>
@@ -19,7 +19,7 @@
             @csrf
             <div class="input-group my-3">
                 <div class="input-group-prepend">
-                    <button class="btn btn-outline-primary" type="submit">Import</button>
+                    <button class="btn btn-outline-primary" type="submit"><i class="fas fa-file-excel mr-2"></i>Import</button>
                 </div>
                 <div class="custom-file">
                     <input type="file" name="file" id="file" class="custom-file-input" accept=".xlsx,.xls,.csv" required>

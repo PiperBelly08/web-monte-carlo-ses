@@ -18,20 +18,19 @@ class SahamController extends Controller
         return redirect()->route('saham.index')->with('success', 'Semua data berhasil dihapus!');
     }
 
-
     public function exportPdf()
     {
         $saham = Saham::all();
         $pdf = Pdf::loadView('saham.pdf', compact('saham'));
         return $pdf->download('saham.pdf');
     }
-    
+
     public function importExcel(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
-        
+
         $file = $request->file('file');
         // Buat folder public/uploads jika belum ada
         $destinationPath = public_path('uploads');
@@ -90,7 +89,7 @@ class SahamController extends Controller
     public function index()
     {
         $saham = Saham::orderBy('date', 'ASC')->get();
-  
+
         return view('saham.index', compact('saham'));
     }
 
@@ -113,7 +112,7 @@ class SahamController extends Controller
     public function store(Request $request)
     {
         Saham::create($request->all());
- 
+
         return redirect()->route('saham.index')->with('success', 'saham added successfully');
     }
 
@@ -125,7 +124,7 @@ class SahamController extends Controller
      */
     public function show(Saham $saham)
     {
-       return view('monte.show', compact('saham'));
+        return view('saham.show', compact('saham'));
     }
 
     /**
@@ -149,7 +148,7 @@ class SahamController extends Controller
     public function update(Request $request, Saham $saham)
     {
         $saham->update($request->all());
-  
+
         return redirect()->route('saham.index')->with('success', 'saham updated successfully');
     }
 
@@ -161,8 +160,8 @@ class SahamController extends Controller
      */
     public function destroy(Saham $saham)
     {
-         $saham = $saham->delete();
-  
+        $saham = $saham->delete();
+
         return redirect()->route('saham.index')->with('success', 'saham deleted successfully');
     }
 }

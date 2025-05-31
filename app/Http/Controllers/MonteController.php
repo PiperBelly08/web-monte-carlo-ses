@@ -180,8 +180,13 @@ class MonteController extends Controller
         return view('monte.index', compact('nama_saham'));
     }
 
-    public function showData(string $id)
+    public function showData(Request $request, string $id)
     {
+        if ($request->isMethod('post')) {
+            $id = $request->nama_saham_selected;
+            
+        }
+
         // Ensure $saham is a Collection and sorted by date
         $saham = Saham::where('nama_saham', $id)
             ->get(['id', 'date', 'nama_saham', 'close'])
