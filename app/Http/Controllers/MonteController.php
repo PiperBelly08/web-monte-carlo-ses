@@ -218,7 +218,7 @@ class MonteController extends Controller
             // If it's not the very first item, we can add a tiny increment to intervalStart
             // to ensure strict non-overlap, though this is usually for specific display/use cases.
             // Be careful with this, as it can make intervals slightly misaligned.
-            // A common approach is [start, end) where end is start of next.
+            // A common approach is [start, end] where end is start of next.
             if ($index > 0) { // Apply for all values after the first one
                 $intervalStart += 0.0001; // Or PHP_FLOAT_EPSILON for higher precision
             }

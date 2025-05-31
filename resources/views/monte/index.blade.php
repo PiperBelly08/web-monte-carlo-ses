@@ -3,7 +3,6 @@
 @section('title', 'Monte Carlo')
 
 @section('contents')
-    <hr />
     <div class="container">
         <div class="row">
             @foreach ($nama_saham as $ns)

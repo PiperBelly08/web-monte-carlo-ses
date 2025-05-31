@@ -101,6 +101,7 @@
                     <th rowspan="2">Kumulatif</th>
                     <th colspan="2">Interval</th>
                     <th rowspan="2">Bilangan acak</th>
+                    <th rowspan="2">MAPE</th>
                 </tr>
                 <tr>
                     <th>Awal</th>
@@ -120,10 +121,17 @@
                             <td class="align-middle">{{ $s->interval_start }}</td>
                             <td class="align-middle">{{ $s->interval_end }}</td>
                             <td class="align-middle">-</td>
+                            <td>60%</td>
                         </tr>
                     @endforeach
                 @endif
             </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="9">Total MAPE</td>
+                    <td>20%</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
     <script>
