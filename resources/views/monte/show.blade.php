@@ -3,7 +3,7 @@
 @section('title', 'Saham '.$id)
 
 @section('contents')
-    <a href="{{ route('monte.index') }}" class="btn btn-sm btn-outline-secondary">Kembali</a>
+    <a href="{{ route('monte.index') }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left"></i> Kembali</a>
     <hr />
     @if(Session::has('success'))
         <div class="alert alert-success" role="alert">
