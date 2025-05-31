@@ -3,70 +3,19 @@
 @section('title', 'Monte Carlo')
 
 @section('contents')
-    <div style="d-flex align-items-center justify-content-between; gap: 10px;">
-        {{-- <h1 class="mb-0">Saham</h1> --}}
-        <form action="{{ route('monte.export.pdf') }}" method="POST" style="d-flex align-items-center justify-content-between; gap: 10px;" target="_blank">
-            @csrf
-            <input type="hidden" name="nama_saham_selected_export" value="{{ old('nama_saham_selected', request('nama_saham_selected')) }}">
-            <button class="btn btn-outline-danger" type="submit">Export PDF</button>
-        </form>
-    </div>
-    <form action="{{ route('monte.index') }}" method="GET" style="d-flex align-items-center justify-content-between; gap: 10px;">
-        @csrf
-        @php
-            $selected = old('nama_saham_selected', request('nama_saham_selected'));
-        @endphp
-        <select class="custom-select" aria-label="Nama Saham" name="nama_saham_selected">
-            @foreach ($nama_saham as $ns)
-                <option value="{{ $ns }}" @selected($ns == $selected)>{{ $ns }}</option>
-            @endforeach
-        </select>
-        <button type="submit" class="btn btn-outline-info">Pilih</button>
-    </form>
     <hr />
-    @if(Session::has('success'))
-        <div class="alert alert-success" role="alert">
-            {{ Session::get('success') }}
+    <div class="container">
+        <div class="row">
+            @foreach ($nama_saham as $ns)
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $ns }}</h5>
+                            <a href="{{ route('monte.show.data', ['id' => $ns]) }}" class="btn btn-primary d-block"><i class="fas fa-external-link-alt"></i> Buka</a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
-    @endif
-    <div class="table-responsive">
-        <table class="table table-hover" id="example">
-            <thead class="table-primary text-nowrap">
-                <tr>
-                    <th rowspan="2">No</th>
-                    <th rowspan="2">Date</th>
-                    <th rowspan="2">Saham</th>
-                    <th rowspan="2">Frekuensi</th>
-                    <th rowspan="2">Probabilitas</th>
-                    <th rowspan="2">Kumulatif</th>
-                    <th colspan="2">Interval</th>
-                    <th rowspan="2">Bilangan acak</th>
-                </tr>
-                <tr>
-                    <th>Awal</th>
-                    <th>Akhir</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if($saham->count() > 0)
-                    @foreach($saham as $s)
-                        <tr>
-                            <td class="align-middle">{{ $loop->iteration }}</td>
-                            <td class="align-middle">{{ $s->date }}</td>
-                            <td class="align-middle">{{ $s->nama_saham }}</td>
-                            <td class="align-middle">{{ $s->close }}</td>
-                            <td class="align-middle">{{ $s->probabilities }}</td>
-                            <td class="align-middle">{{ $s->cumulative }}</td>
-                            <td class="align-middle">{{ $s->interval_start }}</td>
-                            <td class="align-middle">{{ $s->interval_end }}</td>
-                            <td class="align-middle">{{ rand(1, 10000) }}</td>
-                        </tr>
-                    @endforeach
-                @endif
-            </tbody>
-        </table>
     </div>
-    <script>
-        let table = new DataTable('#example');
-    </script>
 @endsection

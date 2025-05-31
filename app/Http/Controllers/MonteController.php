@@ -9,23 +9,78 @@ use Illuminate\Database\Eloquent\Collection;
 
 class MonteController extends Controller
 {
+    /**
+     * Export selected saham data to a PDF file.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
+     */
     public function exportPdf(Request $request)
     {
-        $saham = null;
-        if ($request->isMethod('post') && $request->nama_saham_selected_export) {
-            $saham = Saham::where('nama_saham', $request->nama_saham_selected_export)->get();
-        } else {
-            $saham = Saham::where('nama_saham', 'GOTO.JK')->get();
+        $saham = $request->isMethod('post') && $request->nama_saham_selected_export
+            ? Saham::where('nama_saham', $request->nama_saham_selected_export)
+                ->get(['id', 'date', 'nama_saham', 'close'])
+                ->sortBy('date', SORT_ASC)
+            : Saham::where('nama_saham', Saham::first()->nama_saham)->get()
+                ->get(['id', 'date', 'nama_saham', 'close'])
+                ->sortBy('date', SORT_ASC);
+
+        // Calculate closingSum for all selected saham data
+        $closingSum = $saham->sum('close');
+
+        // Initialize processed as a collection
+        $processed = collect();
+
+        // Initialize cumulative and related variables OUTSIDE the loop for a continuous cumulative sum
+        $cumulative = 0;
+
+        if ($closingSum == 0) {
+            // Handle the case where closingSum is zero (e.g., return empty, throw error)
+            // For now, let's just return an empty collection if sum is zero.
+            return $processed;
         }
 
+        // Single loop is sufficient for a continuous cumulative calculation
+        foreach ($saham as $index => $currentData) {
+            $probabilities = $currentData->close / $closingSum;
 
-        $closingPlucked = $saham->pluck('close');
-        $closingSum = $closingPlucked->sum();
+            // The interval start is the cumulative value before adding the current probability.
+            // For the very first item (index 0), intervalStart will be 0.
+            $intervalStart = $cumulative;
 
+            // If it's not the very first item, we can add a tiny increment to intervalStart
+            // to ensure strict non-overlap, though this is usually for specific display/use cases.
+            // Be careful with this, as it can make intervals slightly misaligned.
+            // A common approach is [start, end) where end is start of next.
+            if ($index > 0) { // Apply for all values after the first one
+                $intervalStart += 0.0001; // Or PHP_FLOAT_EPSILON for higher precision
+            }
 
-        $pdf = Pdf::loadView('monte.pdf', compact('saham', 'closingSum'));
-        return $pdf->download('saham.pdf');
+            // Update the cumulative sum
+            $cumulative += $probabilities;
 
+            // The interval end is the cumulative value after adding the current probability
+            $intervalEnd = $cumulative;
+
+            $processed->push((object)[
+                'id' => $currentData->id,
+                'date' => $currentData->date,
+                'nama_saham' => $currentData->nama_saham,
+                'close' => $currentData->close,
+                'probabilities' => number_format($probabilities, 4),
+                'cumulative' => number_format($cumulative, 4),
+                'interval_start' => number_format($intervalStart, 4),
+                'interval_end' => number_format($intervalEnd, 4),
+            ]);
+        }
+
+        $saham = $processed;
+        $id = $request->nama_saham_selected_export;
+
+        $pdf = Pdf::loadView('monte.pdf', compact('saham', 'id'));
+        return $pdf->download(
+            "monte_saham_" . strtolower(trim(preg_replace('/\s+/', '_', $id))) . "_" . time() . ".pdf"
+        );
     }
 
     /**
@@ -119,10 +174,16 @@ class MonteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $nama_saham = Saham::all()->pluck('nama_saham')->unique();
+        return view('monte.index', compact('nama_saham'));
+    }
+
+    public function showData(string $id)
     {
         // Ensure $saham is a Collection and sorted by date
-        $saham = Saham::where('nama_saham', 'GOTO.JK')
+        $saham = Saham::where('nama_saham', $id)
             ->get(['id', 'date', 'nama_saham', 'close'])
             ->sortBy('date', SORT_ASC);
 
@@ -175,10 +236,10 @@ class MonteController extends Controller
             ]);
         }
 
-        return view('monte.index', [
-            'saham' => $processed,
-            'nama_saham' => $saham->pluck('nama_saham')->unique(),
-        ]);
+        $saham = $processed;
+        $nama_saham = Saham::all()->pluck('nama_saham')->unique();
+
+        return view('monte.show', compact('saham', 'nama_saham', 'id'));
     }
 
     /**
@@ -212,8 +273,7 @@ class MonteController extends Controller
      */
     public function show(string $id)
     {
-        $saham = Saham::findOrFail($id);
-        return view('monte.show', compact('saham'));
+
     }
 
     /**
