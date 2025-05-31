@@ -89,8 +89,9 @@ class SahamController extends Controller
     public function index()
     {
         $saham = Saham::orderBy('date', 'ASC')->get();
+        $nama_saham = $saham->pluck('nama_saham')->unique();
 
-        return view('saham.index', compact('saham'));
+        return view('saham.index', compact('saham', 'nama_saham'));
     }
 
     /**
@@ -176,13 +177,35 @@ class SahamController extends Controller
     {
         // Assuming we're retrieving data from a Saham model based on some query parameters
         $validated = $request->validate([
-            '_token' => 'required',
             'nama_saham' => 'required|string|max:255',
         ]);
 
+        if ($validated['nama_saham'] == '-') {
+            $data = Saham::orderBy('date', 'ASC')
+                ->get([
+                    'date',
+                    'nama_saham',
+                    'close',
+                    'high',
+                    'low',
+                    'open',
+                    'volume',
+                ]);
+            // Return the result as JSON
+            return response()->json($data);
+        }
+
         $data = Saham::where('nama_saham', $validated['nama_saham'])
-            ->orderBy('date', 'asc')
-            ->get();
+            ->orderBy('date', 'ASC')
+            ->get([
+                'date',
+                'nama_saham',
+                'close',
+                'high',
+                'low',
+                'open',
+                'volume',
+            ]);
 
         // Return the result as JSON
         return response()->json($data);

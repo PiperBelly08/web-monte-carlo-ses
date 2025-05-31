@@ -20,6 +20,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('logout', 'logout')->middleware('auth')->name('logout');
 });
 
+Route::prefix('api')->group(function () {
+    Route::post('saham', [SahamController::class, 'getData'])->name('api.saham');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('dashboard', function () {
         $saham = Saham::all();

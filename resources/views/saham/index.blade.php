@@ -29,6 +29,12 @@
         </form>
     </div>
     <hr />
+    <select class="custom-select custom-select-md mb-3" id="nama_saham">
+        <option selected value="-">-- Pilih Saham --</option>
+        @foreach($nama_saham as $ns)
+            <option value="{{ $ns }}" @selected(old('nama_saham') == $ns)>{{ $ns }}</option>
+        @endforeach
+    </select>
     @if(Session::has('success'))
         <div class="alert alert-success" role="alert">
             {{ Session::get('success') }}
@@ -80,5 +86,58 @@
     </div>
     <script>
         let table = new DataTable('#example');
+
+        const selectOption = document.getElementById('nama_saham');
+
+        selectOption.addEventListener('change', () => {
+            fetch("{{ route('api.saham') }}", {
+                method: 'POST', // Specify the HTTP method
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    nama_saham: document.getElementById('nama_saham').value,
+                }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json(); // Parse the JSON response
+                })
+                .then((result) => {
+                    // You can update the table or UI with the result here
+                    table.clear(); // Clear the existing table data
+                    result.forEach((row, index) => {
+                        row.no = index + 1; // Add incremental number
+                    });
+                    table.rows.add(result.map(item => [
+                        item.no,
+                        item.date,
+                        item.nama_saham,
+                        item.open,
+                        item.high,
+                        item.low,
+                        item.close,
+                        item.volume,
+                        `<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
+                            <a href="/saham/${item.id}" type="button" class="btn btn-secondary">Detail</a>
+                            <a href="/saham/${item.id}/edit" type="button" class="btn btn-warning">Edit</a>
+                            <form action="/saham/${item.id}" method="POST" type="button" class="p-0 m-0" onsubmit="return confirm('Delete?')">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                                <button class="btn btn-sm btn-danger m-0">Delete</button>
+                            </form>
+                        </div>`,
+                    ]));
+
+                    table.draw(); // Redraw the table to reflect the changes
+                })
+                .catch((error) => {
+                    console.error('Error:', error); // Handle errors
+                });
+        });
     </script>
 @endsection
