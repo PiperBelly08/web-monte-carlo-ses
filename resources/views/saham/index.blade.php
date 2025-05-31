@@ -69,12 +69,12 @@
                             <td class="align-middle">{{ $rs->volume }}</td>
                             <td class="align-middle">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-                                    <a href="{{ route('saham.show', $rs->id) }}" type="button" class="btn btn-secondary">Detail</a>
-                                    <a href="{{ route('saham.edit', $rs->id)}}" type="button" class="btn btn-warning">Edit</a>
+                                    <a href="{{ route('saham.show', $rs->id) }}" type="button" class="btn btn-info"><i class="fas fa-info-circle mr-2"></i> Detail</a>
+                                    <a href="{{ route('saham.edit', $rs->id)}}" type="button" class="btn btn-warning"><i class="fas fa-edit mr-2"></i> Edit</a>
                                     <form action="{{ route('saham.destroy', $rs->id) }}" method="POST" type="button" class="p-0 m-0" onsubmit="return confirm('Delete?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button class="btn btn-sm btn-danger m-0">Delete</button>
+                                        <button class="btn btn-sm btn-danger m-0"><i class="fas fa-trash mr-2"></i> Delete</button>
                                     </form>
                                 </div>
                             </td>
@@ -123,12 +123,12 @@
                         item.close,
                         item.volume,
                         `<div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-                            <a href="/saham/${item.id}" type="button" class="btn btn-secondary">Detail</a>
-                            <a href="/saham/${item.id}/edit" type="button" class="btn btn-warning">Edit</a>
+                            <a href="/saham/${item.id}" type="button" class="btn btn-info"><i class="fas fa-info-circle mr-2"></i> Detail</a>
+                            <a href="/saham/${item.id}/edit" type="button" class="btn btn-warning"><i class="fas fa-edit mr-2"></i> Edit</a>
                             <form action="/saham/${item.id}" method="POST" type="button" class="p-0 m-0" onsubmit="return confirm('Delete?')">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                                <button class="btn btn-sm btn-danger m-0">Delete</button>
+                                <button class="btn btn-sm btn-danger m-0"><i class="fas fa-trash mr-2"></i> Delete</button>
                             </form>
                         </div>`,
                     ]));
