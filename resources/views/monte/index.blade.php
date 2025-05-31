@@ -41,7 +41,6 @@
                     <th rowspan="2">Kumulatif</th>
                     <th colspan="2">Interval</th>
                     <th rowspan="2">Bilangan acak</th>
-                    <th rowspan="2">Action</th>
                 </tr>
                 <tr>
                     <th>Awal</th>
@@ -61,17 +60,6 @@
                             <td class="align-middle">{{ $s->interval_start }}</td>
                             <td class="align-middle">{{ $s->interval_end }}</td>
                             <td class="align-middle">{{ rand(1, 10000) }}</td>
-                            <td class="align-middle">
-                                <div class="btn-group btn-group-sm" role="group" aria-label="Actions">
-                                    <a href="{{ route('monte.show', $s->id) }}" type="button" class="btn btn-secondary">Detail</a>
-                                    <a href="{{ route('monte.edit', $s->id)}}" type="button" class="btn btn-warning">Edit</a>
-                                    <form action="{{ route('monte.destroy', $s->id) }}" method="POST" type="button" onsubmit="return confirm('Delete?')" class="p-0 m-0">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-danger m-0">Delete</button>
-                                    </form>
-                                </div>
-                            </td>
                         </tr>
                     @endforeach
                 @endif

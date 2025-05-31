@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Saham;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\Eloquent\Collection;
 
 class MonteController extends Controller
 {
@@ -133,7 +134,6 @@ class MonteController extends Controller
 
         // Initialize cumulative and related variables OUTSIDE the loop for a continuous cumulative sum
         $cumulative = 0;
-        $previousCumulative = 0; // Keep track for interval start
 
         if ($closingSum == 0) {
             // Handle the case where closingSum is zero (e.g., return empty, throw error)
