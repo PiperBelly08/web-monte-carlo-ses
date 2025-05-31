@@ -184,7 +184,7 @@ class MonteController extends Controller
     {
         if ($request->isMethod('post')) {
             $id = $request->nama_saham_selected;
-            
+
         }
 
         // Ensure $saham is a Collection and sorted by date
@@ -245,80 +245,5 @@ class MonteController extends Controller
         $nama_saham = Saham::all()->pluck('nama_saham')->unique();
 
         return view('monte.show', compact('saham', 'nama_saham', 'id'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        Saham::create($request->all());
-
-        return redirect()->route('monte.index')->with('success', 'saham added successfully');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show(string $id)
-    {
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(string $id)
-    {
-        $saham = Saham::findOrFail($id);
-        return view('monte.edit', compact('saham'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, string $id)
-    {
-        $saham = Saham::findOrFail($id);
-        $saham->update($request->all());
-
-        return redirect()->route('monte.index')->with('success', 'saham updated successfully');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(string $id)
-    {
-        $saham = Saham::findOrFail($id);
-        $saham = $saham->delete();
-
-        return redirect()->route('saham.index')->with('success', 'saham deleted successfully');
     }
 }
